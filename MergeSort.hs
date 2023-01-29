@@ -1,7 +1,7 @@
 module MergeSort (sortBy, sort) where
 
 halves :: [a] -> ([a], [a])
-halves = flip splitAt <*> (`div` 2) . length
+halves = splitAt =<< (`div` 2) . length
 
 align :: Ord a => (a -> a -> Bool) -> ([a], [a]) -> [a]
 align predicate elements =
@@ -18,13 +18,15 @@ merge :: Ord a => (a -> a -> Bool) -> ([a], [a]) -> [a]
 merge predicate elements =
 
     case elements of
+    (lxs, [ ]) -> lxs
+    ([ ], lys) -> lys
     ([x], [y]) -> predicate `align` (        [x],         [y])
     ([x], lys) -> predicate `align` (        [x], recurse lys)
     (lxs, [y]) -> predicate `align` (recurse lxs,         [y])
     (lxs, lys) -> predicate `align` (recurse lxs, recurse lys)
     where
         recurse = merge predicate . halves
-        
+
 sortBy :: Ord a => (a -> a -> Bool) -> [a] -> [a]
 sortBy predicate = merge predicate . halves
 
